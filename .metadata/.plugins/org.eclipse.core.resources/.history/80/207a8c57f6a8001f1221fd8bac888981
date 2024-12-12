@@ -1,0 +1,64 @@
+package API;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class Activate {
+
+    private static final String API_KEY = "gIXvtfiMpUPuLbjFlJlm4fy2KJRURNHK";
+
+    public static boolean isApiKeyActivated() {
+        return API_KEY != null && !API_KEY.trim().isEmpty();
+    }
+
+    public static void makeApiRequest() {
+        if (!isApiKeyActivated()) {
+            System.out.println("Error: API key is not activated. Please activate your API key.");
+            return;
+        }
+
+        try {
+            String apiUrl = "https://api.examly.io/api/data"; // Update this to the correct endpoint
+            URL url = new URL(apiUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Authorization", "Bearer " + API_KEY);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                System.out.println("Response from API:");
+                System.out.println(response.toString());
+            } else {
+                System.out.println("Error: API responded with status code " + responseCode);
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                String inputLine;
+                StringBuilder errorResponse = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    errorResponse.append(inputLine);
+                }
+                in.close();
+                System.out.println("Error Response: " + errorResponse.toString());
+            }
+
+        } catch (Exception e) {
+            System.out.println("An error occurred while making the API request: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        makeApiRequest();
+    }
+}

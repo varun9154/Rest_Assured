@@ -1,0 +1,42 @@
+package Chart;
+
+import org.graphstream.graph.*;
+import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.*;
+
+public class NetworkTrafficFlowchart {
+    public static void main(String[] args) {
+        // Create a graph object
+        Graph graph = new SingleGraph("Network Traffic Analysis Methodology");
+
+        // Add nodes (steps)
+        graph.addNode("Input Data");
+        graph.addNode("Data Cleaning");
+        graph.addNode("Feature Engineering");
+        graph.addNode("Flow-Based Analysis");
+        graph.addNode("Graph-Based Analysis");
+        graph.addNode("Visualization");
+
+        // Add edges (connections between steps)
+        graph.addEdge("Edge1", "Input Data", "Data Cleaning");
+        graph.addEdge("Edge2", "Data Cleaning", "Feature Engineering");
+        graph.addEdge("Edge3", "Feature Engineering", "Flow-Based Analysis");
+        graph.addEdge("Edge4", "Flow-Based Analysis", "Graph-Based Analysis");
+        graph.addEdge("Edge5", "Graph-Based Analysis", "Visualization");
+
+        // Customize node appearance
+        for (Node node : graph) {
+            node.setAttribute("ui.style", "shape:rounded-box; fill-color:skyblue; size: 200px, 40px;");
+        }
+
+        // Customize edge appearance
+        for (Edge edge : graph.getEdgeSet()) {
+            edge.setAttribute("ui.style", "arrow-size: 10px, 4px; fill-color: black;");
+        }
+
+        // Set up viewer to display the flowchart
+        Viewer viewer = graph.display();
+        viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
+    }
+}
+

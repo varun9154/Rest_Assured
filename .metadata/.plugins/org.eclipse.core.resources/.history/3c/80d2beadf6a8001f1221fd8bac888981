@@ -1,0 +1,52 @@
+package API;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+import org.json.JSONObject;
+import org.json.JSONArray;
+
+public class Activate {
+
+    private static final String ENCRYPTION_ALGORITHM = "AES";
+    private static final String CHARSET = "UTF-8";
+    private static final String SECRET_KEY = "k3QL95NjdP!cA34CsXL"; // Example key, replace with the actual one.
+
+    public static void main(String[] args) {
+        // Simulate fetching encrypted data
+        String encryptedData = "{ \"data\": \"ENCRYPTED_STRING_HERE\" }"; // Replace with actual encrypted data
+        String key = generateKey("school_id", "roll_no");
+
+        try {
+            JSONObject jsonData = new JSONObject(encryptedData);
+            String encryptedString = jsonData.getString("data");
+            String decryptedData = decrypt(encryptedString, key);
+
+            JSONObject decryptedJson = new JSONObject(decryptedData);
+            JSONArray frozenTestData = decryptedJson.getJSONArray("frozen_test_data");
+
+            // Example of processing questions
+            for (int i = 0; i < frozenTestData.length(); i++) {
+                JSONObject questionData = frozenTestData.getJSONObject(i);
+                System.out.println("Question: " + questionData.getString("question"));
+                System.out.println("Answer: " + questionData.getString("answer"));
+            }
+        } catch (Exception e) {
+            System.err.println("Error during decryption: " + e.getMessage());
+        }
+    }
+
+    private static String decrypt(String encryptedText, String key) throws Exception {
+        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(CHARSET), ENCRYPTION_ALGORITHM);
+        Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+        byte[] decodedBytes = Base64.getDecoder().decode(encryptedText);
+        byte[] decryptedBytes = cipher.doFinal(decodedBytes);
+
+        return new String(decryptedBytes, CHARSET);
+    }
+
+    private static String generateKey(String schoolId, String rollNo) {
+        return (schoolId + rollNo).replace("-", "");
+    }
+}

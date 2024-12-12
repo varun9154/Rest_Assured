@@ -1,0 +1,51 @@
+package Chart;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.time.Second;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class TrafficVolumeChart {
+
+    public static void main(String[] args) {
+        // Sample data for traffic volume over time (traffic volume measured at different seconds)
+        TimeSeries trafficVolumeSeries = new TimeSeries("Traffic Volume");
+
+        // Add data points: time (seconds) and traffic volume (e.g., vehicles per minute)
+        trafficVolumeSeries.add(new Second(0, 0, 0, 1, 1, 2024), 100); // 1st second, 100 vehicles
+        trafficVolumeSeries.add(new Second(10, 0, 0, 1, 1, 2024), 200); // 10th second, 200 vehicles
+        trafficVolumeSeries.add(new Second(20, 0, 0, 1, 1, 2024), 400); // 20th second, 400 vehicles (spike)
+        trafficVolumeSeries.add(new Second(30, 0, 0, 1, 1, 2024), 300); // 30th second, 300 vehicles
+        trafficVolumeSeries.add(new Second(40, 0, 0, 1, 1, 2024), 150); // 40th second, 150 vehicles
+
+        // Create a TimeSeriesCollection (dataset)
+        TimeSeriesCollection dataset = new TimeSeriesCollection(trafficVolumeSeries);
+
+        // Create the chart
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+                "Traffic Volume Over Time",    // Title
+                "Time",                        // X-axis label
+                "Traffic Volume (vehicles/min)", // Y-axis label
+                dataset,                       // Dataset
+                true,                          // Legend
+                true,                          // Tooltips
+                false                          // URLs
+        );
+
+        // Display the chart
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(800, 600));
+        JFrame frame = new JFrame("Traffic Volume Time Series Chart");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(chartPanel, BorderLayout.CENTER);
+        frame.pack();
+        frame.setVisible(true);
+    }
+}
+
